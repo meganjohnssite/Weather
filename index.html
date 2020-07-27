@@ -1,0 +1,171 @@
+
+
+
+<html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Check my Weather</title>
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <style>
+       body{
+           background-color: #8Fc1E3;
+       }
+       h1 {
+           color: #F7F9FB;
+           text-align: center;
+       }
+       .btn-info{
+           background-color: #022140;
+           color: #F7F9Fb;
+       }
+       p{
+           text-align: center;
+       }
+       .hot{
+           color: #F79E02;
+           padding: 5px;
+           margin: 10px;
+       }
+       .wickedHot{
+           color: #7E191B;
+       }
+       .mild{
+           color: #fff000;
+           padding: 5px;
+           margin: 10px;
+       }
+       #clouds{
+           display: none;
+       }
+       #skies{
+           display: none;
+       }
+       #rainy{
+           display: none;
+       }
+       #snow{
+           display: none;
+       }
+       #weather-message{
+           display: inline-block;
+       }
+
+    </style>
+    </head>
+    <body>
+
+        <div class="container">
+	
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>Weather Conditions</h1>
+                    <p>Use our tool to check the weather conditions in your local area.</p>
+                </div>    
+            
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <input type="number" class="form-control" id="newZipcode" name="newZipcode" placeholder="Enter Zipcode Here">
+                    </div>
+                </div> 
+            
+                    <div class="col-sm-3">
+                        <button type="button" onClick="findZipcode();" class="btn btn-info">Check Weather</button> </div>          
+            <div class="row"> 
+                
+                <div class="col-sm-12">
+                    <h3 id="weather-message"></h3> 
+                    <span id="icon"> <i id="icon" class="fa fa-thermometer-4 fa-3x"></i></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <image id="clouds" src="clouds.jpg" class= "img-fluid" alt="image of clouds"></image>
+                    <image id="skies" src="skies.jpg" class= "img-fluid" alt="image of clear skies"></image>
+                    <image id="rainy" src="rainy.jpg" class= "img-fluid" alt="image of a rainy day"></image>
+                    <image id="snow" src="snow.jpg" class= "img-fluid" alt="image of a snowy day"></image>
+                </div>
+            </div>
+              
+        </div>        
+            
+                
+
+        <script type="text/javascript">
+
+    
+            
+            function findZipcode(){
+			let newZipcode = document.getElementById("newZipcode").value;
+			getWeather(newZipcode);
+		}
+            
+            getWeather(72745);
+
+            function getWeather(zipcode) {
+                let request = new XMLHttpRequest();
+            
+                request.onreadystatechange = function() {
+                    if (request.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+                        if (request.status == 200) {
+                            let forecast = JSON.parse(request.responseText);
+                            console.log(forecast);
+                            let conditions = forecast.name + " currently has " + forecast.weather[0].description + "." + " The temperature is " + forecast.main.temp + " degrees.";
+                            console.log(conditions);
+                            document.getElementById("weather-message").innerText = conditions;
+
+                            let icon = document.getElementById("icon");
+                             if(forecast.main.temp >= 85 && forecast.main.temp <= 90){
+                                 icon.className = "hot";
+                                 }
+                             else if(forecast.main.temp > 90){
+                                 icon.className = "wickedHot";
+                             }    
+                             else {
+                                 icon.className = "mild";
+                             }
+
+
+                             if(forecast.weather[0].main == "Clouds"){
+                                clouds.style.display= "block";
+                                skies.style.display= "none";
+                                rainy.style.display= "none";
+                                snow.style.display= "none";
+                             }
+                             else if (forecast.weather[0].main == "Clear"){
+                                skies.style.display= "block";
+                                clouds.style.display= "none"; 
+                                rainy.style.display= "none";
+                                snow.style.display= "none"; 
+
+                             }
+                             else if (forecast.weather[0].main == "Thunderstorm" || forecast.weather[0].main == "Rain" || forecast.weather[0].main == "Drizzle"){
+                                rainy.style.display= "block";
+                                clouds.style.display= "none";  
+                                skies.style.display= "none";
+                                snow.style.display= "none";
+
+                             }
+                             else if (forecast.weather[0].main == "Snow"){
+                                snow.style.display= "block";
+                                clouds.style.display= "none"; 
+                                rainy.style.display= "none";
+                                skies.style.display= "none";
+                             }
+                        }
+                        else {
+                            alert('There was an error');
+                        }
+                    }
+                }; 
+                request.open("GET", "http://api.openweathermap.org/data/2.5/weather?zip=" + zipcode + ",US&units=imperial&appid=ccef2c8c8034982955bec1e0b2a83e36", true);
+                request.send();
+            }
+        </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
